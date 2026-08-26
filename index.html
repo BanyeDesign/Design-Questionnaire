@@ -1353,20 +1353,29 @@
 
     // 组装提交数据
     const text = generateTextResult();
-    const submitData = new FormData();
-    submitData.append('name', formData.ownerName || '客户');
-    submitData.append('email', formData.phone || '未填电话');
-    submitData.append('_subject', '【半野设计】新客户需求问卷 - ' + (formData.ownerName || ''));
-    submitData.append('_template', 'table');
-    submitData.append('message', text);
+    const submitData = {
+      access_key: '3d87c554-2f87-4163-a60a-9c5e993a7e3d',
+      subject: '【半野设计】新客户需求问卷 - ' + (formData.ownerName || '客户'),
+      from_name: '半野设计·Banye Design 问卷系统',
+      name: formData.ownerName || '客户',
+      email: 'noreply@banyeedesign.com',
+      phone: formData.phone || '未填电话',
+      address: formData.address || '未填地址',
+      message: text
+    };
 
-    // 提交到 FormSubmit
-    fetch('https://formsubmit.co/banyeedesign@163.com', {
+    // 提交到 Web3Forms
+    fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      body: submitData
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(submitData)
     })
-    .then(response => {
-      if (response.ok) {
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
         showSubmitSuccess();
       } else {
         showSubmitFallback();

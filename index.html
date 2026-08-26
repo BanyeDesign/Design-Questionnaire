@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<title>家装设计需求问卷</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  :root {
+    --primary: #2f2e2b;
+    --primary-light: #5a5955;
+    --accent: #b8a07a;
+    --accent-light: #d4c4a8;
+    --bg: #f7f5f2;
+    --card: #ffffff;
+    --text-1: #2f2e2b;
+    --text-2: #6b665d;
+    --text-3: #a09a90;
+    --border: #e8e5df;
+    --success: #5a9a6a;
+    --error: #c75a5a;
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text-1);
+    font-size: 15px;
+    line-height: 1.6;
+    padding-bottom: 100px;
+  }
+  
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    padding: 40px 20px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(184,160,122,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .header-subtitle {
+    font-size: 13px;
+    opacity: 0.8;
+    position: relative;
+  }
+  
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    position: relative;
+  }
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .progress-text {
+    font-size: 12px;
+    opacity: 0.9;
+    min-width: 50px;
+    text-align: right;
+  }
+  
+  .steps-nav {
+    display: flex;
+    padding: 12px 16px;
+    gap: 6px;
+    overflow-x: auto;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    -webkit-overflow-scrolling: touch;
+  }
+  .steps-nav::-webkit-scrollbar { display: none; }
+  .step-chip {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    background: var(--bg);
+    color: var(--text-3);
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .step-chip.active {
+    background: rgba(47,46,43,0.08);
+    color: var(--primary);
+    font-weight: 600;
+    border-color: var(--primary);
+  }
+  
+  .container {
+    padding: 16px;
+  }
+  
+  .step-section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .step-section.active {
+    display: block;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+  }
+  
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-1);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(184,160,122,0.15);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+  }
+  .section-desc {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-bottom: 16px;
+    margin-left: 36px;
+  }
+  
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group:last-child {
+    margin-bottom: 0;
+  }
+  .form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-1);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .form-label .required {
+    color: var(--error);
+    margin-left: 2px;
+  }
+  
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: inherit;
+    transition: all 0.2s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color: var(--primary);
+    background: #fff;
+  }
+  .form-textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+  }
+  .form-select {
+    position: relative;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a09a90' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  .option-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .option-chip {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    background: var(--bg);
+    color: var(--text-2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .option-chip.selected {
+    background: rgba(47,46,43,0.08);
+    color: var(--primary);
+    border-color: var(--primary);
+    font-weight: 500;
+  }
+  
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .choice-card {
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .choice-card.selected {
+    border-color: var(--primary);
+    background: rgba(47,46,43,0.05);
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .choice-card .choice-icon {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+  
+  .action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-primary:active {
+    background: var(--primary-light);
+    transform: scale(0.98);
+  }
+  .btn-secondary {
+    background: var(--bg);
+    color: var(--text-2);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:active {
+    background: #eee;
+  }
+  .btn-success {
+    background: var(--success);
+    color: #fff;
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .result-page {
+    display: none;
+    padding: 30px 20px;
+    text-align: center;
+  }
+  .result-page.active {
+    display: block;
+  }
+  .result-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(90,154,106,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 20px;
+  }
+  .result-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .result-desc {
+    font-size: 14px;
+    color: var(--text-2);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .result-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: left;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .result-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    color: var(--primary);
+  }
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+  .result-item .label {
+    color: var(--text-3);
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+  .result-item .value {
+    color: var(--text-1);
+    text-align: right;
+    font-weight: 500;
+    word-break: break-all;
+  }
+  
+  .copy-hint {
+    font-size: 12px;
+    color: var(--text-3);
+    text-align: center;
+    margin-top: 12px;
+  }
+  
+  .toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .toast.show {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title">家装设计需求问卷</div>
+  <div class="header-subtitle">花几分钟填写，让设计师更懂你的家</div>
+  <div class="progress-bar">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width: 16.6%"></div>
+    </div>
+    <div class="progress-text" id="progressText">1/6</div>
+  </div>
+</div>
+
+<div class="steps-nav" id="stepsNav">
+  <div class="step-chip active" data-step="0">基本信息</div>
+  <div class="step-chip" data-step="1">家庭结构</div>
+  <div class="step-chip" data-step="2">设计偏好</div>
+  <div class="step-chip" data-step="3">预算时间</div>
+  <div class="step-chip" data-step="4">生活习惯</div>
+  <div class="step-chip" data-step="5">特殊需求</div>
+</div>
+
+<div class="container" id="formContainer">
+
+  <!-- Step 1: 基本信息 -->
+  <div class="step-section active" data-step="0">
+    <div class="card">
+      <div class="section-title">
+        <span class="section-icon">&#127968;</span>
+        房屋基本信息
+      </div>
+      <div class="section-desc">让我们先了解一下您的房屋情况</div>
+      
+      <div class="form-group">
+        <label class="form-label">您的称呼<span class="required">*</span></label>
+        <input type="text" class="form-input" id="ownerName" placeholder="如：张先生 / 李女士">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">联系电话<span class="required">*</span></label>
+        <input type="tel" class="form-input" id="phone" placeholder="方便设计师联系您">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">房屋地址</label>
+        <input type="text" class="form-input" id="address" placeholder="如：杭州·XX小区">
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">房屋类型</label>
+          <select class="form-select" id="houseType">
+            <option value="">请选择</option>
+            <option value="公寓">公寓</option>
+            <option value="平层">平层</option>
+            <option value="复式">复式</option>
+            <option value="跃层">跃层</option>
+            <option value="别墅">别墅</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">建筑面积</label>
+          <input type="text" class="form-input" id="area" placeholder="如：128㎡">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: 家庭结构 -->
+  <div class="step-section" data-step="1">
+    <div class="card">
+      <div class="section-title">
+        <span class="section-icon">&#128101;</span>
+        家庭人口结构
+      </div>
+      <div class="section-desc">帮助我们规划更适合您家庭的空间</div>
+      
+      <div class="form-group">
+        <label class="form-label">常住家庭成员</label>
+        <input type="text" class="form-input" id="familyStructure" placeholder="如：一家三口（夫妻+1个8岁男孩）">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">是否有老人同住？</label>
+        <div class="choice-grid">
+          <div class="choice-card" data-field="hasElderly" data-value="false">
+            <div class="choice-icon">&#128102;</div>
+            没有
+          </div>
+          <div class="choice-card" data-field="hasElderly" data-value="true">
+            <div class="choice-icon">&#128116;</div>
+            有老人
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">是否有小孩？</label>
+        <div class="choice-grid">
+          <div class="choice-card" data-field="hasChildren" data-value="false">
+            <div class="choice-icon">&#128100;</div>
+            没有
+          </div>
+          <div class="choice-card" data-field="hasChildren" data-value="true">
+            <div class="choice-icon">&#128118;</div>
+            有小孩
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">是否养宠物？</label>
+        <div class="choice-grid">
+          <div class="choice-card" data-field="havePets" data-value="false">
+            <div class="choice-icon">&#10060;</div>
+            没有
+          </div>
+          <div class="choice-card" data-field="havePets" data-value="true">
+            <div class="choice-icon">&#128054;</div>
+            有宠物
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group" id="petTypeGroup" style="display:none;">
+        <label class="form-label">宠物类型</label>
+        <input type="text" class="form-input" id="petType" placeholder="如：金毛犬 / 布偶猫">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">是否在家办公？</label>
+        <div class="choice-grid">
+          <div class="choice-card" data-field="workFromHome" data-value="false">
+            <div class="choice-icon">&#127970;</div>
+            不需要
+          </div>
+          <div class="choice-card" data-field="workFromHome" data-value="true">
+            <div class="choice-icon">&#128188;</div>
+            需要
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">收纳需求</label>
+        <div class="choice-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="choice-card" data-field="storageNeed" data-value="low">
+            一般
+          </div>
+          <div class="choice-card" data-field="storageNeed" data-value="medium">
+            中等
+          </div>
+          <div class="choice-card" data-field="storageNeed" data-value="high">
+            很高
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: 设计偏好 -->
+  <div class="step-section" data-step="2">
+    <div class="card">
+      <div class="section-title">
+        <span class="section-icon">&#127912;</span>
+        设计风格偏好
+      </div>
+      <div class="section-desc">告诉我们您喜欢的感觉，多选也可以</div>
+      
+      <div class="form-group">
+        <label class="form-label">喜欢的装修风格（可多选）</label>
+        <div class="option-group" id="styleOptions">
+          <div class="option-chip" data-value="现代简约">现代简约</div>
+          <div class="option-chip" data-value="日式极简">日式极简</div>
+          <div class="option-chip" data-value="北欧风">北欧风</div>
+          <div class="option-chip" data-value="轻法式">轻法式</div>
+          <div class="option-chip" data-value="奶油风">奶油风</div>
+          <div class="option-chip" data-value="新中式">新中式</div>
+          <div class="option-chip" data-value="工业风">工业风</div>
+          <div class="option-chip" data-value="美式复古">美式复古</div>
+          <div class="option-chip" data-value="侘寂风">侘寂风</div>
+          <div class="option-chip" data-value="现代东方">现代东方</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">其他喜欢的风格</label>
+        <input type="text" class="form-input" id="otherStyle" placeholder="没有列出来的可以写在这里">
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">颜色偏好</label>
+          <input type="text" class="form-input" id="colorPreference" placeholder="如：暖灰色、奶白色">
+        </div>
+        <div class="form-group">
+          <label class="form-label">材质偏好</label>
+          <input type="text" class="form-input" id="materialPreference" placeholder="如：实木、石材">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">家具风格偏好</label>
+        <input type="text" class="form-input" id="furnitureStyle" placeholder="如：简约实木、轻奢">
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: 预算与时间 -->
+  <div class="step-section" data-step="3">
+    <div class="card">
+      <div class="section-title">
+        <span class="section-icon">&#128176;</span>
+        预算与时间安排
+      </div>
+      <div class="section-desc">合理的预算和时间规划是好设计的基础</div>
+      
+      <div class="form-group">
+        <label class="form-label">总体装修预算</label>
+        <div class="choice-grid">
+          <div class="choice-card" data-field="budgetRange" data-value="10-20万">
+            10-20万
+          </div>
+          <div class="choice-card" data-field="budgetRange" data-value="20-40万">
+            20-40万
+          </div>
+          <div class="choice-card" data-field="budgetRange" data-value="40-60万">
+            40-60万
+          </div>
+          <div class="choice-card" data-field="budgetRange" data-value="60-100万">
+            60-100万
+          </div>
+          <div class="choice-card" data-field="budgetRange" data-value="100万以上">
+            100万以上
+          </div>
+          <div class="choice-card" data-field="budgetRange" data-value="待定">
+            还没确定
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">具体预算说明</label>
+        <input type="text" class="form-input" id="budgetDetail" placeholder="如：含设计费不含家电，大约80万左右">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">希望开工时间</label>
+        <select class="form-select" id="startTime">
+          <option value="">请选择</option>
+          <option value="尽快开工">尽快开工</option>
+          <option value="1个月内">1个月内</option>
+          <option value="3个月内">3个月内</option>
+          <option value="半年内">半年内</option>
+          <option value="还没确定">还没确定</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">希望完工时间</label>
+        <input type="text" class="form-input" id="expectedCompletion" placeholder="如：2026年底前入住">
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5: 生活习惯 -->
+  <div class="step-section" data-step="4">
+    <div class="card">
+      <div class="section-title">
+        <span class="section-icon">&#127869;</span>
+        日常生活习惯
+      </div>
+      <div class="section-desc">了解您的生活方式，设计更贴心</div>
+      
+      <div class="form-group">
+        <label class="form-label">日常烹饪方式</label>
+        <div class="choice-grid">
+          <div class="choice-card" data-field="cookingStyle" data-value="中餐为主">
+            中餐为主
+          </div>
+          <div class="choice-card" data-field="cookingStyle" data-value="西餐为主">
+            西餐为主
+          </div>
+          <div class="choice-card" data-field="cookingStyle" data-value="中西结合">
+            中西结合
+          </div>
+          <div class="choice-card" data-field="cookingStyle" data-value="很少做饭">
+            很少做饭
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">兴趣爱好（可多选）</label>
+        <div class="option-group" id="hobbyOptions">
+          <div class="option-chip" data-value="阅读">阅读</div>
+          <div class="option-chip" data-value="观影">观影</div>
+          <div class="option-chip" data-value="健身">健身</div>
+          <div class="option-chip" data-value="品茶">品茶</div>
+          <div class="option-chip" data-value="烘焙">烘焙</div>
+          <div class="option-chip" data-value="插花">插花</div>
+          <div class="option-chip" data-value="绘画">绘画</div>
+          <div class="option-chip" data-value="音乐">音乐</div>
+          <div class="option-chip" data-value="游戏">游戏</div>
+          <div class="option-chip" data-value="养花">养花</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">其他爱好</label>
+        <input type="text" class="form-input" id="otherHobbies" placeholder="没有列出来的可以写在这里">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">灯光需求偏好</label>
+        <select class="form-select" id="lightingRequirement">
+          <option value="">请选择</option>
+          <option value="明亮简洁，主灯为主">明亮简洁，主灯为主</option>
+          <option value="氛围为主，无主灯设计">氛围为主，无主灯设计</option>
+          <option value="智能灯光，可调节场景">智能灯光，可调节场景</option>
+          <option value="重点区域加强照明">重点区域加强照明</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 6: 特殊需求 -->
+  <div class="step-section" data-step="5">
+    <div class="card">
+      <div class="section-title">
+        <span class="section-icon">&#128161;</span>
+        特殊需求与想法
+      </div>
+      <div class="section-desc">有什么特别想要的都可以告诉我们</div>
+      
+      <div class="form-group">
+        <label class="form-label">特别想要的空间/功能</label>
+        <textarea class="form-textarea" id="specialNeeds" placeholder="比如：需要独立书房、衣帽间、儿童活动区、影音室、茶室、酒窖等"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">其他需要注意的事项</label>
+        <textarea class="form-textarea" id="otherRequirements" placeholder="比如：对某种材质过敏、有宗教信仰、风水讲究、亲朋好友常来住等"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">您最看重的设计要素（可多选）</label>
+        <div class="option-group" id="priorityOptions">
+          <div class="option-chip" data-value="收纳空间">收纳空间</div>
+          <div class="option-chip" data-value="采光通风">采光通风</div>
+          <div class="option-chip" data-value="动线流畅">动线流畅</div>
+          <div class="option-chip" data-value="颜值效果">颜值效果</div>
+          <div class="option-chip" data-value="环保材料">环保材料</div>
+          <div class="option-chip" data-value="预算控制">预算控制</div>
+          <div class="option-chip" data-value="智能家居">智能家居</div>
+          <div class="option-chip" data-value="隔音隐私">隔音隐私</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">还有什么想跟设计师说的？</label>
+        <textarea class="form-textarea" id="additionalNotes" placeholder="随便聊聊您对家的想象和期待～"></textarea>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Result page -->
+<div class="result-page" id="resultPage">
+  <div class="result-icon">&#9989;</div>
+  <div class="result-title">问卷填写完成！</div>
+  <div class="result-desc">
+    感谢您的耐心填写<br>
+    请点击下方按钮复制内容，发送给您的设计师
+  </div>
+  
+  <div class="result-card" id="resultCard">
+    <div class="result-card-title">&#128203; 业主需求汇总</div>
+    <div id="resultContent"></div>
+  </div>
+  
+  <div class="copy-hint">&#128161; 点击下方按钮一键复制，然后在微信中粘贴发送</div>
+</div>
+
+<!-- Bottom action bar -->
+<div class="action-bar" id="actionBar">
+  <button class="btn btn-secondary" id="prevBtn" onclick="prevStep()" style="display:none;">上一步</button>
+  <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">下一步</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  let currentStep = 0;
+  const totalSteps = 6;
+  
+  const formData = {
+    ownerName: '',
+    phone: '',
+    address: '',
+    houseType: '',
+    area: '',
+    familyStructure: '',
+    hasElderly: false,
+    hasChildren: false,
+    havePets: false,
+    petType: '',
+    workFromHome: false,
+    storageNeed: 'medium',
+    styles: [],
+    otherStyle: '',
+    colorPreference: '',
+    materialPreference: '',
+    furnitureStyle: '',
+    budgetRange: '',
+    budgetDetail: '',
+    startTime: '',
+    expectedCompletion: '',
+    cookingStyle: '',
+    hobbies: [],
+    otherHobbies: '',
+    lightingRequirement: '',
+    specialNeeds: '',
+    otherRequirements: '',
+    priorities: [],
+    additionalNotes: ''
+  };
+  
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  const stepsNav = document.getElementById('stepsNav');
+  const formContainer = document.getElementById('formContainer');
+  const resultPage = document.getElementById('resultPage');
+  const actionBar = document.getElementById('actionBar');
+  
+  function updateProgress() {
+    const percent = ((currentStep + 1) / totalSteps) * 100;
+    progressFill.style.width = percent + '%';
+    progressText.textContent = (currentStep + 1) + '/' + totalSteps;
+    
+    document.querySelectorAll('.step-chip').forEach((chip, i) => {
+      chip.classList.remove('active');
+      if (i === currentStep) chip.classList.add('active');
+    });
+    
+    const prevBtnEl = document.getElementById('prevBtn');
+    const nextBtnEl = document.getElementById('nextBtn');
+    if (prevBtnEl) prevBtnEl.style.display = currentStep > 0 ? 'block' : 'none';
+    if (nextBtnEl) nextBtnEl.textContent = currentStep === totalSteps - 1 ? '提交问卷' : '下一步';
+  }
+  
+  function showStep(step) {
+    document.querySelectorAll('.step-section').forEach(s => {
+      s.classList.remove('active');
+    });
+    document.querySelector(`.step-section[data-step="${step}"]`).classList.add('active');
+    currentStep = step;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  function nextStep() {
+    collectStepData(currentStep);
+    saveMultiSelectData();
+    
+    if (currentStep === 0) {
+      if (!document.getElementById('ownerName').value.trim()) {
+        showToast('请填写您的称呼');
+        return;
+      }
+      if (!document.getElementById('phone').value.trim()) {
+        showToast('请填写联系电话');
+        return;
+      }
+    }
+    
+    if (currentStep < totalSteps - 1) {
+      showStep(currentStep + 1);
+      restoreStepData(currentStep);
+    } else {
+      submitForm();
+    }
+  }
+  
+  function prevStep() {
+    if (currentStep > 0) {
+      collectStepData(currentStep);
+      saveMultiSelectData();
+      showStep(currentStep - 1);
+      restoreStepData(currentStep);
+    }
+  }
+  
+  // Tab 自由切换
+  document.querySelectorAll('.step-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const targetStep = parseInt(chip.dataset.step);
+      collectStepData(currentStep);
+      saveMultiSelectData();
+      showStep(targetStep);
+      restoreStepData(targetStep);
+    });
+  });
+  
+  // 单选卡片
+  document.querySelectorAll('.choice-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const field = card.dataset.field;
+      const value = card.dataset.value;
+      
+      document.querySelectorAll(`.choice-card[data-field="${field}"]`).forEach(c => {
+        c.classList.remove('selected');
+      });
+      card.classList.add('selected');
+      
+      if (value === 'true') formData[field] = true;
+      else if (value === 'false') formData[field] = false;
+      else formData[field] = value;
+      
+      if (field === 'havePets') {
+        document.getElementById('petTypeGroup').style.display = value === 'true' ? 'block' : 'none';
+      }
+    });
+  });
+  
+  // 多选标签
+  function setupOptionGroup(groupId) {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    group.querySelectorAll('.option-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('selected');
+      });
+    });
+  }
+  
+  setupOptionGroup('styleOptions');
+  setupOptionGroup('hobbyOptions');
+  setupOptionGroup('priorityOptions');
+  
+  function getSelectedOptions(groupId) {
+    const group = document.getElementById(groupId);
+    if (!group) return [];
+    return Array.from(group.querySelectorAll('.option-chip.selected'))
+      .map(c => c.dataset.value);
+  }
+  
+  function saveMultiSelectData() {
+    formData.styles = getSelectedOptions('styleOptions');
+    formData.hobbies = getSelectedOptions('hobbyOptions');
+    formData.priorities = getSelectedOptions('priorityOptions');
+  }
+  
+  // 收集数据
+  function collectStepData(step) {
+    if (step === 0) {
+      formData.ownerName = document.getElementById('ownerName').value.trim();
+      formData.phone = document.getElementById('phone').value.trim();
+      formData.address = document.getElementById('address').value.trim();
+      formData.houseType = document.getElementById('houseType').value;
+      formData.area = document.getElementById('area').value.trim();
+    }
+    if (step === 1) {
+      formData.familyStructure = document.getElementById('familyStructure').value.trim();
+      formData.petType = document.getElementById('petType').value.trim();
+    }
+    if (step === 2) {
+      formData.otherStyle = document.getElementById('otherStyle').value.trim();
+      formData.colorPreference = document.getElementById('colorPreference').value.trim();
+      formData.materialPreference = document.getElementById('materialPreference').value.trim();
+      formData.furnitureStyle = document.getElementById('furnitureStyle').value.trim();
+    }
+    if (step === 3) {
+      formData.budgetDetail = document.getElementById('budgetDetail').value.trim();
+      formData.startTime = document.getElementById('startTime').value;
+      formData.expectedCompletion = document.getElementById('expectedCompletion').value.trim();
+    }
+    if (step === 4) {
+      formData.otherHobbies = document.getElementById('otherHobbies').value.trim();
+      formData.lightingRequirement = document.getElementById('lightingRequirement').value;
+    }
+    if (step === 5) {
+      formData.specialNeeds = document.getElementById('specialNeeds').value.trim();
+      formData.otherRequirements = document.getElementById('otherRequirements').value.trim();
+      formData.additionalNotes = document.getElementById('additionalNotes').value.trim();
+    }
+  }
+  
+  // 恢复数据到表单
+  function restoreStepData(step) {
+    if (step === 0) {
+      document.getElementById('ownerName').value = formData.ownerName || '';
+      document.getElementById('phone').value = formData.phone || '';
+      document.getElementById('address').value = formData.address || '';
+      document.getElementById('houseType').value = formData.houseType || '';
+      document.getElementById('area').value = formData.area || '';
+    }
+    if (step === 1) {
+      document.getElementById('familyStructure').value = formData.familyStructure || '';
+      document.getElementById('petType').value = formData.petType || '';
+      restoreChoiceCard('hasElderly', formData.hasElderly);
+      restoreChoiceCard('hasChildren', formData.hasChildren);
+      restoreChoiceCard('havePets', formData.havePets);
+      restoreChoiceCard('workFromHome', formData.workFromHome);
+      restoreChoiceCard('storageNeed', formData.storageNeed || 'medium');
+      document.getElementById('petTypeGroup').style.display = formData.havePets ? 'block' : 'none';
+    }
+    if (step === 2) {
+      document.getElementById('otherStyle').value = formData.otherStyle || '';
+      document.getElementById('colorPreference').value = formData.colorPreference || '';
+      document.getElementById('materialPreference').value = formData.materialPreference || '';
+      document.getElementById('furnitureStyle').value = formData.furnitureStyle || '';
+      restoreOptionGroup('styleOptions', formData.styles || []);
+    }
+    if (step === 3) {
+      document.getElementById('budgetDetail').value = formData.budgetDetail || '';
+      document.getElementById('startTime').value = formData.startTime || '';
+      document.getElementById('expectedCompletion').value = formData.expectedCompletion || '';
+      restoreChoiceCard('budgetRange', formData.budgetRange || '');
+    }
+    if (step === 4) {
+      document.getElementById('otherHobbies').value = formData.otherHobbies || '';
+      document.getElementById('lightingRequirement').value = formData.lightingRequirement || '';
+      restoreChoiceCard('cookingStyle', formData.cookingStyle || '');
+      restoreOptionGroup('hobbyOptions', formData.hobbies || []);
+    }
+    if (step === 5) {
+      document.getElementById('specialNeeds').value = formData.specialNeeds || '';
+      document.getElementById('otherRequirements').value = formData.otherRequirements || '';
+      document.getElementById('additionalNotes').value = formData.additionalNotes || '';
+      restoreOptionGroup('priorityOptions', formData.priorities || []);
+    }
+  }
+  
+  function restoreChoiceCard(field, value) {
+    const cards = document.querySelectorAll(`.choice-card[data-field="${field}"]`);
+    cards.forEach(card => {
+      const cardValue = card.dataset.value;
+      let match = false;
+      if (value === true) match = cardValue === 'true';
+      else if (value === false) match = cardValue === 'false';
+      else match = cardValue === value;
+      card.classList.toggle('selected', match);
+    });
+  }
+  
+  function restoreOptionGroup(groupId, values) {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    group.querySelectorAll('.option-chip').forEach(chip => {
+      chip.classList.toggle('selected', values.includes(chip.dataset.value));
+    });
+  }
+  
+  // 提交
+  function submitForm() {
+    collectStepData(5);
+    formData.styles = getSelectedOptions('styleOptions');
+    formData.hobbies = getSelectedOptions('hobbyOptions');
+    formData.priorities = getSelectedOptions('priorityOptions');
+    
+    generateResult();
+    
+    formContainer.style.display = 'none';
+    stepsNav.style.display = 'none';
+    resultPage.classList.add('active');
+    
+    actionBar.innerHTML = `
+      <button class="btn btn-secondary" onclick="goBackForm()">返回修改</button>
+      <button class="btn btn-success" onclick="copyResult()">一键复制内容</button>
+    `;
+  }
+  
+  function goBackForm() {
+    formContainer.style.display = 'block';
+    stepsNav.style.display = 'flex';
+    resultPage.classList.remove('active');
+    actionBar.innerHTML = `
+      <button class="btn btn-secondary" id="prevBtn" onclick="prevStep()">上一步</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">提交问卷</button>
+    `;
+    document.getElementById('prevBtn').style.display = 'block';
+  }
+  
+  function generateResult() {
+    const content = document.getElementById('resultContent');
+    
+    const items = [
+      { label: '业主称呼', value: formData.ownerName },
+      { label: '联系电话', value: formData.phone },
+      { label: '房屋地址', value: formData.address },
+      { label: '房屋类型', value: formData.houseType },
+      { label: '建筑面积', value: formData.area },
+      { label: '家庭结构', value: formData.familyStructure },
+      { label: '有老人同住', value: formData.hasElderly ? '是' : '否' },
+      { label: '有小孩', value: formData.hasChildren ? '是' : '否' },
+      { label: '养宠物', value: formData.havePets ? ('是 - ' + formData.petType) : '否' },
+      { label: '在家办公', value: formData.workFromHome ? '需要' : '不需要' },
+      { label: '收纳需求', value: { low: '一般', medium: '中等', high: '很高' }[formData.storageNeed] || '中等' },
+      { label: '喜欢的风格', value: [...formData.styles, formData.otherStyle].filter(Boolean).join('、') },
+      { label: '颜色偏好', value: formData.colorPreference },
+      { label: '材质偏好', value: formData.materialPreference },
+      { label: '家具风格', value: formData.furnitureStyle },
+      { label: '预算范围', value: formData.budgetRange },
+      { label: '预算说明', value: formData.budgetDetail },
+      { label: '开工时间', value: formData.startTime },
+      { label: '完工时间', value: formData.expectedCompletion },
+      { label: '烹饪方式', value: formData.cookingStyle },
+      { label: '兴趣爱好', value: [...formData.hobbies, formData.otherHobbies].filter(Boolean).join('、') },
+      { label: '灯光需求', value: formData.lightingRequirement },
+      { label: '特殊需求', value: formData.specialNeeds },
+      { label: '其他注意事项', value: formData.otherRequirements },
+      { label: '看重的要素', value: formData.priorities.join('、') },
+      { label: '补充说明', value: formData.additionalNotes }
+    ];
+    
+    content.innerHTML = items
+      .filter(item => item.value && item.value !== '否' && item.value !== '不需要' && item.value !== '中等')
+      .map(item => `
+        <div class="result-item">
+          <span class="label">${item.label}</span>
+          <span class="value">${item.value}</span>
+        </div>
+      `).join('');
+  }
+  
+  function copyResult() {
+    const text = generateTextResult();
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('已复制到剪贴板，去微信粘贴吧！');
+    }).catch(() => {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showToast('已复制到剪贴板，去微信粘贴吧！');
+    });
+  }
+  
+  function generateTextResult() {
+    let text = '【家装设计需求问卷】\n';
+    text += '━━━━━━━━━━━━━━\n\n';
+    text += '📋 基本信息\n';
+    text += '  业主称呼：' + formData.ownerName + '\n';
+    text += '  联系电话：' + formData.phone + '\n';
+    if (formData.address) text += '  房屋地址：' + formData.address + '\n';
+    if (formData.houseType) text += '  房屋类型：' + formData.houseType + '\n';
+    if (formData.area) text += '  建筑面积：' + formData.area + '\n';
+    
+    text += '\n👨‍👩‍👧 家庭结构\n';
+    if (formData.familyStructure) text += '  人口结构：' + formData.familyStructure + '\n';
+    text += '  老人同住：' + (formData.hasElderly ? '是' : '否') + '\n';
+    text += '  有小孩：' + (formData.hasChildren ? '是' : '否') + '\n';
+    text += '  养宠物：' + (formData.havePets ? ('是 - ' + formData.petType) : '否') + '\n';
+    text += '  在家办公：' + (formData.workFromHome ? '需要' : '不需要') + '\n';
+    text += '  收纳需求：' + ({ low: '一般', medium: '中等', high: '很高' }[formData.storageNeed] || '中等') + '\n';
+    
+    const styles = [...formData.styles, formData.otherStyle].filter(Boolean).join('、');
+    if (styles) {
+      text += '\n🎨 设计偏好\n';
+      text += '  喜欢风格：' + styles + '\n';
+      if (formData.colorPreference) text += '  颜色偏好：' + formData.colorPreference + '\n';
+      if (formData.materialPreference) text += '  材质偏好：' + formData.materialPreference + '\n';
+      if (formData.furnitureStyle) text += '  家具风格：' + formData.furnitureStyle + '\n';
+    }
+    
+    text += '\n💰 预算与时间\n';
+    if (formData.budgetRange) text += '  预算范围：' + formData.budgetRange + '\n';
+    if (formData.budgetDetail) text += '  预算说明：' + formData.budgetDetail + '\n';
+    if (formData.startTime) text += '  开工时间：' + formData.startTime + '\n';
+    if (formData.expectedCompletion) text += '  完工时间：' + formData.expectedCompletion + '\n';
+    
+    text += '\n🍳 生活习惯\n';
+    if (formData.cookingStyle) text += '  烹饪方式：' + formData.cookingStyle + '\n';
+    const hobbies = [...formData.hobbies, formData.otherHobbies].filter(Boolean).join('、');
+    if (hobbies) text += '  兴趣爱好：' + hobbies + '\n';
+    if (formData.lightingRequirement) text += '  灯光需求：' + formData.lightingRequirement + '\n';
+    
+    if (formData.specialNeeds || formData.otherRequirements) {
+      text += '\n✨ 特殊需求\n';
+      if (formData.specialNeeds) text += '  特别需求：' + formData.specialNeeds + '\n';
+      if (formData.otherRequirements) text += '  注意事项：' + formData.otherRequirements + '\n';
+    }
+    
+    if (formData.priorities.length > 0) {
+      text += '\n⭐ 看重的要素\n';
+      text += '  ' + formData.priorities.join('、') + '\n';
+    }
+    
+    if (formData.additionalNotes) {
+      text += '\n💬 补充说明\n';
+      text += '  ' + formData.additionalNotes + '\n';
+    }
+    
+    text += '\n━━━━━━━━━━━━━━\n';
+    text += '填写时间：' + new Date().toLocaleDateString('zh-CN') + '\n';
+    
+    return text;
+  }
+  
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2000);
+  }
+  
+  updateProgress();
+</script>
+
+</body>
+</html>

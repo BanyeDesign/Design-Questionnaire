@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="format-detection" content="telephone=no">
-<title>家装设计需求问卷</title>
+<title>半野设计·Banye Design需求问卷</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   
@@ -420,7 +420,7 @@
 <body>
 
 <div class="header">
-  <div class="header-title">家装设计需求问卷</div>
+  <div class="header-title">半野设计·Banye Design需求问卷</div>
   <div class="header-subtitle">花几分钟填写，让设计师更懂你的家</div>
   <div class="progress-bar">
     <div class="progress-track">
@@ -461,7 +461,7 @@
       </div>
       
       <div class="form-group">
-        <label class="form-label">房屋地址</label>
+        <label class="form-label">房屋地址<span class="required">*</span></label>
         <input type="text" class="form-input" id="address" placeholder="如：杭州·XX小区">
       </div>
       
@@ -697,14 +697,29 @@
           <input type="text" class="form-input" id="colorPreference" placeholder="如：暖灰色、奶白色">
         </div>
         <div class="form-group">
-          <label class="form-label">材质偏好</label>
-          <input type="text" class="form-input" id="materialPreference" placeholder="如：实木、石材">
+          <label class="form-label">材质偏好（可多选）</label>
+          <div class="option-group" id="materialOptions">
+            <div class="option-chip" data-value="实木">实木</div>
+            <div class="option-chip" data-value="金属">金属</div>
+            <div class="option-chip" data-value="板材">板材</div>
+            <div class="option-chip" data-value="棉麻质感">棉麻质感</div>
+            <div class="option-chip" data-value="真皮">真皮</div>
+            <div class="option-chip" data-value="其它">其它</div>
+          </div>
         </div>
       </div>
-      
+
       <div class="form-group">
-        <label class="form-label">家具风格偏好</label>
-        <input type="text" class="form-input" id="furnitureStyle" placeholder="如：简约实木、轻奢">
+        <label class="form-label">家具风格偏好（可多选）</label>
+        <div class="option-group" id="furnitureOptions">
+          <div class="option-chip" data-value="成品家具">成品家具</div>
+          <div class="option-chip" data-value="定制家具">定制家具</div>
+          <div class="option-chip" data-value="实木家具">实木家具</div>
+          <div class="option-chip" data-value="金属家具">金属家具</div>
+          <div class="option-chip" data-value="传统中式">传统中式</div>
+          <div class="option-chip" data-value="现代极简">现代极简</div>
+          <div class="option-chip" data-value="其它">其它</div>
+        </div>
       </div>
     </div>
   </div>
@@ -830,11 +845,12 @@
         <label class="form-label">灯光需求偏好（可多选）</label>
         <div class="option-group" id="lightingOptions">
           <div class="option-chip" data-value="明亮简洁，主灯为主">明亮简洁，主灯为主</div>
-          <div class="option-chip" data-value="氛围为主，无主灯设计">氛围为主，无主灯设计</div>
+          <div class="option-chip" data-value="无主灯设计，提升氛围">无主灯设计，提升氛围</div>
           <div class="option-chip" data-value="智能灯光，可调节场景">智能灯光，可调节场景</div>
+          <div class="option-chip" data-value="色温可调">色温可调</div>
+          <div class="option-chip" data-value="亮度可调">亮度可调</div>
           <div class="option-chip" data-value="重点区域加强照明">重点区域加强照明</div>
           <div class="option-chip" data-value="卧室柔和暖光">卧室柔和暖光</div>
-          <div class="option-chip" data-value="色温可调">色温可调</div>
         </div>
       </div>
 
@@ -993,8 +1009,8 @@
     spaces: [],
     otherSpace: '',
     colorPreference: '',
-    materialPreference: '',
-    furnitureStyle: '',
+    materialOptions: [],
+    furnitureOptions: [],
     budgetRange: '',
     budgetDetail: '',
     startTime: '',
@@ -1058,6 +1074,10 @@
       }
       if (!document.getElementById('phone').value.trim()) {
         showToast('请填写联系电话');
+        return;
+      }
+      if (!document.getElementById('address').value.trim()) {
+        showToast('请填写房屋地址');
         return;
       }
     }
@@ -1127,6 +1147,8 @@
   setupOptionGroup('priorityOptions');
   setupOptionGroup('elderlyTitleOptions');
   setupOptionGroup('spaceOptions');
+  setupOptionGroup('materialOptions');
+  setupOptionGroup('furnitureOptions');
   setupOptionGroup('lightingOptions');
   setupOptionGroup('smartOptions');
   setupOptionGroup('ecoOptions');
@@ -1171,6 +1193,8 @@
     formData.priorities = getSelectedOptions('priorityOptions');
     formData.elderlyTitle = getSelectedOptions('elderlyTitleOptions');
     formData.spaces = getSelectedOptions('spaceOptions');
+    formData.materialOptions = getSelectedOptions('materialOptions');
+    formData.furnitureOptions = getSelectedOptions('furnitureOptions');
     formData.lightingOptions = getSelectedOptions('lightingOptions');
     formData.smartOptions = getSelectedOptions('smartOptions');
     formData.ecoOptions = getSelectedOptions('ecoOptions');
@@ -1201,8 +1225,6 @@
       formData.otherStyle = document.getElementById('otherStyle').value.trim();
       formData.otherSpace = document.getElementById('otherSpace').value.trim();
       formData.colorPreference = document.getElementById('colorPreference').value.trim();
-      formData.materialPreference = document.getElementById('materialPreference').value.trim();
-      formData.furnitureStyle = document.getElementById('furnitureStyle').value.trim();
     }
     if (step === 3) {
       formData.budgetDetail = document.getElementById('budgetDetail').value.trim();
@@ -1253,10 +1275,10 @@
       document.getElementById('otherStyle').value = formData.otherStyle || '';
       document.getElementById('otherSpace').value = formData.otherSpace || '';
       document.getElementById('colorPreference').value = formData.colorPreference || '';
-      document.getElementById('materialPreference').value = formData.materialPreference || '';
-      document.getElementById('furnitureStyle').value = formData.furnitureStyle || '';
       restoreOptionGroup('styleOptions', formData.styles || []);
       restoreOptionGroup('spaceOptions', formData.spaces || []);
+      restoreOptionGroup('materialOptions', formData.materialOptions || []);
+      restoreOptionGroup('furnitureOptions', formData.furnitureOptions || []);
       const otherSpaceGroup = document.getElementById('otherSpaceGroup');
       if (otherSpaceGroup) {
         const hasOther = (formData.spaces || []).includes('其它空间');
@@ -1316,6 +1338,8 @@
     formData.priorities = getSelectedOptions('priorityOptions');
     formData.elderlyTitle = getSelectedOptions('elderlyTitleOptions');
     formData.spaces = getSelectedOptions('spaceOptions');
+    formData.materialOptions = getSelectedOptions('materialOptions');
+    formData.furnitureOptions = getSelectedOptions('furnitureOptions');
     formData.lightingOptions = getSelectedOptions('lightingOptions');
     formData.smartOptions = getSelectedOptions('smartOptions');
     formData.ecoOptions = getSelectedOptions('ecoOptions');
@@ -1388,8 +1412,8 @@
       { label: '喜欢的风格', value: [...formData.styles, formData.otherStyle].filter(Boolean).join('、') },
       { label: '看重空间', value: spacesText },
       { label: '颜色偏好', value: formData.colorPreference },
-      { label: '材质偏好', value: formData.materialPreference },
-      { label: '家具风格', value: formData.furnitureStyle },
+      { label: '材质偏好', value: formData.materialOptions.join('、') },
+      { label: '家具风格', value: formData.furnitureOptions.join('、') },
       { label: '预算范围', value: formData.budgetRange },
       { label: '预算说明', value: formData.budgetDetail },
       { label: '开工时间', value: formData.startTime },
@@ -1434,7 +1458,7 @@
   }
   
   function generateTextResult() {
-    let text = '【家装设计需求问卷】\n';
+    let text = '【半野设计·Banye Design需求问卷】\n';
     text += '━━━━━━━━━━━━━━\n\n';
     text += '📋 基本信息\n';
     text += '  业主称呼：' + formData.ownerName + '\n';
@@ -1476,13 +1500,13 @@
     const styles = [...formData.styles, formData.otherStyle].filter(Boolean).join('、');
     // 看重空间含其它
     let spacesText = formData.spaces.map(s => s === '其它空间' ? (formData.otherSpace ? '其它：' + formData.otherSpace : '其它空间') : s).join('、');
-    if (styles || spacesText || formData.colorPreference || formData.materialPreference || formData.furnitureStyle) {
+    if (styles || spacesText || formData.colorPreference || formData.materialOptions.length > 0 || formData.furnitureOptions.length > 0) {
       text += '\n🎨 设计偏好\n';
       if (styles) text += '  喜欢风格：' + styles + '\n';
       if (spacesText) text += '  看重空间：' + spacesText + '\n';
       if (formData.colorPreference) text += '  颜色偏好：' + formData.colorPreference + '\n';
-      if (formData.materialPreference) text += '  材质偏好：' + formData.materialPreference + '\n';
-      if (formData.furnitureStyle) text += '  家具风格：' + formData.furnitureStyle + '\n';
+      if (formData.materialOptions.length > 0) text += '  材质偏好：' + formData.materialOptions.join('、') + '\n';
+      if (formData.furnitureOptions.length > 0) text += '  家具风格：' + formData.furnitureOptions.join('、') + '\n';
     }
 
     text += '\n💰 预算与时间\n';

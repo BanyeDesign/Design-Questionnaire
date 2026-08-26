@@ -954,19 +954,18 @@
 
 <!-- Result page -->
 <div class="result-page" id="resultPage">
-  <div class="result-icon">&#9989;</div>
-  <div class="result-title">问卷填写完成！</div>
-  <div class="result-desc">
-    感谢您的耐心填写<br>
-    请点击下方按钮复制内容，发送给您的设计师
+  <div class="result-icon" id="resultIcon">&#8987;</div>
+  <div class="result-title" id="resultTitle">正在提交...</div>
+  <div class="result-desc" id="resultDesc">
+    正在将您的需求发送给设计师，请稍候
   </div>
-  
-  <div class="result-card" id="resultCard">
+
+  <div class="result-card" id="resultCard" style="display:none;">
     <div class="result-card-title">&#128203; 业主需求汇总</div>
     <div id="resultContent"></div>
   </div>
-  
-  <div class="copy-hint">&#128161; 点击下方按钮一键复制，然后在微信中粘贴发送</div>
+
+  <div class="copy-hint" id="copyHint" style="display:none;">&#128161; 如需补充说明，可复制内容发微信给设计师</div>
 </div>
 
 <!-- Bottom action bar -->
@@ -1345,13 +1344,63 @@
     formData.ecoOptions = getSelectedOptions('ecoOptions');
     formData.noiseOptions = getSelectedOptions('noiseOptions');
     formData.passiveOptions = getSelectedOptions('passiveOptions');
-    
-    generateResult();
-    
+
+    // 显示提交中状态
     formContainer.style.display = 'none';
     stepsNav.style.display = 'none';
     resultPage.classList.add('active');
-    
+    actionBar.innerHTML = '';
+
+    // 组装提交数据
+    const text = generateTextResult();
+    const submitData = new FormData();
+    submitData.append('name', formData.ownerName || '客户');
+    submitData.append('email', formData.phone || '未填电话');
+    submitData.append('_subject', '【半野设计】新客户需求问卷 - ' + (formData.ownerName || ''));
+    submitData.append('_template', 'table');
+    submitData.append('message', text);
+
+    // 提交到 FormSubmit
+    fetch('https://formsubmit.co/banyeedesign@163.com', {
+      method: 'POST',
+      body: submitData
+    })
+    .then(response => {
+      if (response.ok) {
+        showSubmitSuccess();
+      } else {
+        showSubmitFallback();
+      }
+    })
+    .catch(error => {
+      showSubmitFallback();
+    });
+  }
+
+  function showSubmitSuccess() {
+    document.getElementById('resultIcon').innerHTML = '&#9989;';
+    document.getElementById('resultTitle').textContent = '提交成功！';
+    document.getElementById('resultDesc').innerHTML = '感谢您的耐心填写<br>设计师已收到您的需求，会尽快与您联系';
+
+    generateResult();
+    document.getElementById('resultCard').style.display = 'block';
+    document.getElementById('copyHint').style.display = 'block';
+
+    actionBar.innerHTML = `
+      <button class="btn btn-secondary" onclick="goBackForm()">返回修改</button>
+      <button class="btn btn-success" onclick="copyResult()">一键复制内容</button>
+    `;
+  }
+
+  function showSubmitFallback() {
+    document.getElementById('resultIcon').innerHTML = '&#10071;';
+    document.getElementById('resultTitle').textContent = '提交遇到问题';
+    document.getElementById('resultDesc').innerHTML = '网络可能有延迟，您可以直接复制内容<br>发微信给设计师，效果一样';
+
+    generateResult();
+    document.getElementById('resultCard').style.display = 'block';
+    document.getElementById('copyHint').style.display = 'block';
+
     actionBar.innerHTML = `
       <button class="btn btn-secondary" onclick="goBackForm()">返回修改</button>
       <button class="btn btn-success" onclick="copyResult()">一键复制内容</button>

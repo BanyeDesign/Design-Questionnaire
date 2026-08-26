@@ -496,20 +496,11 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">是否带院子 / 露台</label>
-        <div class="choice-grid" style="grid-template-columns: repeat(3, 1fr);">
-          <div class="choice-card" data-field="yardTerrace" data-value="带院子">
-            <div class="choice-icon">&#127797;</div>
-            带院子
-          </div>
-          <div class="choice-card" data-field="yardTerrace" data-value="带露台">
-            <div class="choice-icon">&#127744;</div>
-            带露台
-          </div>
-          <div class="choice-card" data-field="yardTerrace" data-value="无">
-            <div class="choice-icon">&#128311;</div>
-            无
-          </div>
+        <label class="form-label">是否带院子 / 露台（可多选）</label>
+        <div class="option-group" id="yardOptions">
+          <div class="option-chip" data-value="带院子">带院子</div>
+          <div class="option-chip" data-value="带露台">带露台</div>
+          <div class="option-chip" data-value="无">无</div>
         </div>
       </div>
 
@@ -705,6 +696,9 @@
             <div class="option-chip" data-value="真皮">真皮</div>
             <div class="option-chip" data-value="其它">其它</div>
           </div>
+          <div id="otherMaterialGroup" style="display:none; margin-top:8px;">
+            <input type="text" class="form-input" id="otherMaterial" placeholder="请填写其它材质">
+          </div>
         </div>
       </div>
 
@@ -718,6 +712,9 @@
           <div class="option-chip" data-value="传统中式">传统中式</div>
           <div class="option-chip" data-value="现代极简">现代极简</div>
           <div class="option-chip" data-value="其它">其它</div>
+        </div>
+        <div id="otherFurnitureGroup" style="display:none; margin-top:8px;">
+          <input type="text" class="form-input" id="otherFurniture" placeholder="请填写其它家具风格">
         </div>
       </div>
     </div>
@@ -850,6 +847,10 @@
           <div class="option-chip" data-value="亮度可调">亮度可调</div>
           <div class="option-chip" data-value="重点区域加强照明">重点区域加强照明</div>
           <div class="option-chip" data-value="卧室柔和暖光">卧室柔和暖光</div>
+          <div class="option-chip" data-value="其它">其它</div>
+        </div>
+        <div id="otherLightingGroup" style="display:none; margin-top:8px;">
+          <input type="text" class="form-input" id="otherLighting" placeholder="请填写其它灯光需求">
         </div>
       </div>
 
@@ -863,6 +864,10 @@
           <div class="option-chip" data-value="远程控制家电">远程控制家电</div>
           <div class="option-chip" data-value="智能温控">智能温控</div>
           <div class="option-chip" data-value="暂无需求">暂无需求</div>
+          <div class="option-chip" data-value="其它">其它</div>
+        </div>
+        <div id="otherSmartGroup" style="display:none; margin-top:8px;">
+          <input type="text" class="form-input" id="otherSmart" placeholder="请填写其它智能化需求">
         </div>
       </div>
 
@@ -1006,6 +1011,8 @@
     otherStyle: '',
     spaces: [],
     otherSpace: '',
+    otherMaterial: '',
+    otherFurniture: '',
     colorPreference: '',
     materialOptions: [],
     furnitureOptions: [],
@@ -1016,6 +1023,8 @@
     cookingStyle: '',
     hobbies: [],
     otherHobbies: '',
+    otherLighting: '',
+    otherSmart: '',
     lightingOptions: [],
     smartOptions: [],
     ecoOptions: [],
@@ -1147,11 +1156,30 @@
   setupOptionGroup('spaceOptions');
   setupOptionGroup('materialOptions');
   setupOptionGroup('furnitureOptions');
+  setupOptionGroup('yardOptions');
   setupOptionGroup('lightingOptions');
   setupOptionGroup('smartOptions');
   setupOptionGroup('ecoOptions');
   setupOptionGroup('noiseOptions');
   setupOptionGroup('passiveOptions');
+
+  // "其它"选项联动显示输入框
+  function setupOtherInput(groupId, otherValue, inputId, showDivId) {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    group.querySelectorAll('.option-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const isSelected = chip.classList.contains('selected');
+        const div = document.getElementById(showDivId);
+        if (div) div.style.display = (isSelected && chip.dataset.value === otherValue) ? 'block' : 'none';
+      });
+    });
+  }
+  setupOtherInput('spaceOptions', '其它空间', 'otherSpace', 'otherSpaceGroup');
+  setupOtherInput('materialOptions', '其它', 'otherMaterial', 'otherMaterialGroup');
+  setupOtherInput('furnitureOptions', '其它', 'otherFurniture', 'otherFurnitureGroup');
+  setupOtherInput('lightingOptions', '其它', 'otherLighting', 'otherLightingGroup');
+  setupOtherInput('smartOptions', '其它', 'otherSmart', 'otherSmartGroup');
 
   // 无小孩按钮
   const noChildrenChip = document.getElementById('noChildrenChip');
@@ -1193,6 +1221,7 @@
     formData.spaces = getSelectedOptions('spaceOptions');
     formData.materialOptions = getSelectedOptions('materialOptions');
     formData.furnitureOptions = getSelectedOptions('furnitureOptions');
+    formData.yardOptions = getSelectedOptions('yardOptions');
     formData.lightingOptions = getSelectedOptions('lightingOptions');
     formData.smartOptions = getSelectedOptions('smartOptions');
     formData.ecoOptions = getSelectedOptions('ecoOptions');
@@ -1222,6 +1251,8 @@
     if (step === 2) {
       formData.otherStyle = document.getElementById('otherStyle').value.trim();
       formData.otherSpace = document.getElementById('otherSpace').value.trim();
+      formData.otherMaterial = document.getElementById('otherMaterial').value.trim();
+      formData.otherFurniture = document.getElementById('otherFurniture').value.trim();
       formData.colorPreference = document.getElementById('colorPreference').value.trim();
     }
     if (step === 3) {
@@ -1231,6 +1262,8 @@
     }
     if (step === 4) {
       formData.otherHobbies = document.getElementById('otherHobbies').value.trim();
+      formData.otherLighting = document.getElementById('otherLighting').value.trim();
+      formData.otherSmart = document.getElementById('otherSmart').value.trim();
     }
     if (step === 5) {
       formData.specialNeeds = document.getElementById('specialNeeds').value.trim();
@@ -1251,7 +1284,7 @@
       document.getElementById('roomShi').value = formData.roomShi || '';
       document.getElementById('roomTing').value = formData.roomTing || '';
       document.getElementById('roomWei').value = formData.roomWei || '';
-      restoreChoiceCard('yardTerrace', formData.yardTerrace || '');
+      restoreOptionGroup('yardOptions', formData.yardOptions || []);
       restoreChoiceCard('houseCondition', formData.houseCondition || '');
       restoreChoiceCard('serviceScope', formData.serviceScope || '');
     }
@@ -1272,6 +1305,8 @@
     if (step === 2) {
       document.getElementById('otherStyle').value = formData.otherStyle || '';
       document.getElementById('otherSpace').value = formData.otherSpace || '';
+      document.getElementById('otherMaterial').value = formData.otherMaterial || '';
+      document.getElementById('otherFurniture').value = formData.otherFurniture || '';
       document.getElementById('colorPreference').value = formData.colorPreference || '';
       restoreOptionGroup('styleOptions', formData.styles || []);
       restoreOptionGroup('spaceOptions', formData.spaces || []);
@@ -1282,6 +1317,10 @@
         const hasOther = (formData.spaces || []).includes('其它空间');
         otherSpaceGroup.style.display = hasOther ? 'block' : 'none';
       }
+      const otherMaterialGroup = document.getElementById('otherMaterialGroup');
+      if (otherMaterialGroup) otherMaterialGroup.style.display = (formData.materialOptions || []).includes('其它') ? 'block' : 'none';
+      const otherFurnitureGroup = document.getElementById('otherFurnitureGroup');
+      if (otherFurnitureGroup) otherFurnitureGroup.style.display = (formData.furnitureOptions || []).includes('其它') ? 'block' : 'none';
     }
     if (step === 3) {
       document.getElementById('budgetDetail').value = formData.budgetDetail || '';
@@ -1291,6 +1330,8 @@
     }
     if (step === 4) {
       document.getElementById('otherHobbies').value = formData.otherHobbies || '';
+      document.getElementById('otherLighting').value = formData.otherLighting || '';
+      document.getElementById('otherSmart').value = formData.otherSmart || '';
       restoreChoiceCard('cookingStyle', formData.cookingStyle || '');
       restoreOptionGroup('hobbyOptions', formData.hobbies || []);
       restoreOptionGroup('lightingOptions', formData.lightingOptions || []);
@@ -1298,6 +1339,10 @@
       restoreOptionGroup('ecoOptions', formData.ecoOptions || []);
       restoreOptionGroup('noiseOptions', formData.noiseOptions || []);
       restoreOptionGroup('passiveOptions', formData.passiveOptions || []);
+      const otherLightingGroup = document.getElementById('otherLightingGroup');
+      if (otherLightingGroup) otherLightingGroup.style.display = (formData.lightingOptions || []).includes('其它') ? 'block' : 'none';
+      const otherSmartGroup = document.getElementById('otherSmartGroup');
+      if (otherSmartGroup) otherSmartGroup.style.display = (formData.smartOptions || []).includes('其它') ? 'block' : 'none';
     }
     if (step === 5) {
       document.getElementById('specialNeeds').value = formData.specialNeeds || '';
@@ -1456,7 +1501,7 @@
       { label: '房屋类型', value: formData.houseType },
       { label: '建筑面积', value: formData.area },
       { label: '户型结构', value: layoutText },
-      { label: '院子/露台', value: formData.yardTerrace },
+      { label: '院子/露台', value: (formData.yardOptions || []).join('、') },
       { label: '房屋现状', value: formData.houseCondition },
       { label: '服务范围', value: formData.serviceScope },
       { label: '家庭结构', value: formData.familyStructure },
@@ -1469,16 +1514,16 @@
       { label: '喜欢的风格', value: [...formData.styles, formData.otherStyle].filter(Boolean).join('、') },
       { label: '看重空间', value: spacesText },
       { label: '颜色偏好', value: formData.colorPreference },
-      { label: '材质偏好', value: formData.materialOptions.join('、') },
-      { label: '家具风格', value: formData.furnitureOptions.join('、') },
+      { label: '材质偏好', value: formData.materialOptions.map(m => m === '其它' ? (formData.otherMaterial ? '其它：' + formData.otherMaterial : '其它') : m).join('、') },
+      { label: '家具风格', value: formData.furnitureOptions.map(f => f === '其它' ? (formData.otherFurniture ? '其它：' + formData.otherFurniture : '其它') : f).join('、') },
       { label: '预算范围', value: formData.budgetRange },
       { label: '预算说明', value: formData.budgetDetail },
       { label: '开工时间', value: formData.startTime },
       { label: '完工时间', value: formData.expectedCompletion },
       { label: '烹饪方式', value: formData.cookingStyle },
       { label: '兴趣爱好', value: [...formData.hobbies, formData.otherHobbies].filter(Boolean).join('、') },
-      { label: '灯光需求', value: formData.lightingOptions.join('、') },
-      { label: '智能化需求', value: formData.smartOptions.join('、') },
+      { label: '灯光需求', value: formData.lightingOptions.map(l => l === '其它' ? (formData.otherLighting ? '其它：' + formData.otherLighting : '其它') : l).join('、') },
+      { label: '智能化需求', value: formData.smartOptions.map(s => s === '其它' ? (formData.otherSmart ? '其它：' + formData.otherSmart : '其它') : s).join('、') },
       { label: '低碳节能', value: formData.ecoOptions.join('、') },
       { label: '噪音需求', value: formData.noiseOptions.join('、') },
       { label: '被动房需求', value: formData.passiveOptions.join('、') },
@@ -1531,7 +1576,7 @@
     if (formData.roomWei) layoutText += formData.roomWei + '卫';
     if (layoutText) text += '  户型结构：' + layoutText + '\n';
 
-    if (formData.yardTerrace) text += '  院子/露台：' + formData.yardTerrace + '\n';
+    if (formData.yardOptions && formData.yardOptions.length > 0) text += '  院子/露台：' + formData.yardOptions.join('、') + '\n';
     if (formData.houseCondition) text += '  房屋现状：' + formData.houseCondition + '\n';
     if (formData.serviceScope) text += '  服务范围：' + formData.serviceScope + '\n';
 
@@ -1562,8 +1607,8 @@
       if (styles) text += '  喜欢风格：' + styles + '\n';
       if (spacesText) text += '  看重空间：' + spacesText + '\n';
       if (formData.colorPreference) text += '  颜色偏好：' + formData.colorPreference + '\n';
-      if (formData.materialOptions.length > 0) text += '  材质偏好：' + formData.materialOptions.join('、') + '\n';
-      if (formData.furnitureOptions.length > 0) text += '  家具风格：' + formData.furnitureOptions.join('、') + '\n';
+      if (formData.materialOptions.length > 0) text += '  材质偏好：' + formData.materialOptions.map(m => m === '其它' ? (formData.otherMaterial ? '其它：' + formData.otherMaterial : '其它') : m).join('、') + '\n';
+      if (formData.furnitureOptions.length > 0) text += '  家具风格：' + formData.furnitureOptions.map(f => f === '其它' ? (formData.otherFurniture ? '其它：' + formData.otherFurniture : '其它') : f).join('、') + '\n';
     }
 
     text += '\n💰 预算与时间\n';
@@ -1576,8 +1621,8 @@
     if (formData.cookingStyle) text += '  烹饪方式：' + formData.cookingStyle + '\n';
     const hobbies = [...formData.hobbies, formData.otherHobbies].filter(Boolean).join('、');
     if (hobbies) text += '  兴趣爱好：' + hobbies + '\n';
-    if (formData.lightingOptions.length > 0) text += '  灯光需求：' + formData.lightingOptions.join('、') + '\n';
-    if (formData.smartOptions.length > 0) text += '  智能化需求：' + formData.smartOptions.join('、') + '\n';
+    if (formData.lightingOptions.length > 0) text += '  灯光需求：' + formData.lightingOptions.map(l => l === '其它' ? (formData.otherLighting ? '其它：' + formData.otherLighting : '其它') : l).join('、') + '\n';
+    if (formData.smartOptions.length > 0) text += '  智能化需求：' + formData.smartOptions.map(s => s === '其它' ? (formData.otherSmart ? '其它：' + formData.otherSmart : '其它') : s).join('、') + '\n';
     if (formData.ecoOptions.length > 0) text += '  低碳节能：' + formData.ecoOptions.join('、') + '\n';
     if (formData.noiseOptions.length > 0) text += '  噪音需求：' + formData.noiseOptions.join('、') + '\n';
     if (formData.passiveOptions.length > 0) text += '  被动房需求：' + formData.passiveOptions.join('、') + '\n';
